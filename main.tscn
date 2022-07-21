@@ -1,3 +1,10 @@
 [gd_scene format=2]
 
 [node name="Main" type="Node2D"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+margin_right = 606.0
+margin_bottom = 319.0
+text = "HELLO WORLD"
