@@ -1,13 +1,12 @@
-extends RigidBody2D
+extends KinematicBody2D
 
 
-func _process(delta: float) -> void:
-	var cool := delta * 10.0
+onready var rod_tip: Node2D = get_node("/root/Main/Player/Rod/Tip")
+onready var timer: Timer = get_node("Timer")
 
-	if Input.is_action_pressed("player_up"):
-		self.apply_central_impulse(Vector2(0, -10))
-		#self.position.y -= cool
 
-	if Input.is_action_pressed("player_down"):
-		#self.position.y += cool
-		self.apply_central_impulse(Vector2(0, 10))
+
+func _process(_delta) -> void:
+	#self.rotate(rod_tip.global_position.angle_to(self.global_position))
+	#self.rotate(self.global_position.angle_to(rod_tip.global_position))
+	pass

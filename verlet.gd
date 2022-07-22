@@ -3,7 +3,9 @@ extends Node2D
 var _points := []
 var _sticks := []
 var _friction := 0.999
+var _elements := 10
 
+onready var hook: Node2D = get_node("/root/Main/Hook")
 
 func distance(p0: Dictionary, p1: Dictionary) -> float:
 	var dx = p1.x - p0.x
@@ -12,17 +14,22 @@ func distance(p0: Dictionary, p1: Dictionary) -> float:
 
 
 func _init() -> void:
-	for _i in range(10):
+	print("Hook: ", hook)
+
+	for _i in range(_elements):
 		var x = rand_range(0, 300)
 		var y = rand_range(0, 300)
 		var oldx = x + rand_range(-10, 10)
 		var oldy = y + rand_range(-10, 10)
 		self._points.append({x = x, y = y, oldx = oldx, oldy = oldy, pinned = false})
+
 	self._points[0].x = 0
 	self._points[0].y = 0
 	self._points[0].oldx = 0
 	self._points[0].olyy = 0
 	self._points[0].pinned = true
+
+	self._points[_elements-1].pinned = true
 
 	for i in range(1, len(self._points)):
 		self._sticks.append(
@@ -37,15 +44,17 @@ func _init() -> void:
 
 
 func _process(_delta) -> void:
-	if Engine.time_scale > 0.0:
-		self._update_points()
-		#self._points[0].x = 300
-		#self._points[0].y = 300
-		for _i in range(0, 3):
-			self._update_sticks()
+
+
+	self._update_points()
+	for _i in range(0, 3):
+		self._update_sticks()
 
 	# Calls _draw
 	self.update()
+
+	self._points[_elements-1].x = hook.position.x
+	self._points[_elements-1].y = hook.position.y
 
 
 func _draw() -> void:

@@ -158,6 +158,21 @@ _global_script_classes=[ {
 "class": "GSAIUtils",
 "language": "GDScript",
 "path": "res://addons/com.gdquest.godot-steering-ai-framework/GSAIUtils.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Squid",
+"language": "GDScript",
+"path": "res://squid.gd"
+}, {
+"base": "Node",
+"class": "State",
+"language": "GDScript",
+"path": "res://state/state.gd"
+}, {
+"base": "Node",
+"class": "StateMachine",
+"language": "GDScript",
+"path": "res://state/state_machine.gd"
 } ]
 _global_script_class_icons={
 "Fish": "",
@@ -189,7 +204,10 @@ _global_script_class_icons={
 "GSAISteeringAgent": "",
 "GSAISteeringBehavior": "",
 "GSAITargetAcceleration": "",
-"GSAIUtils": ""
+"GSAIUtils": "",
+"Squid": "",
+"State": "",
+"StateMachine": ""
 }
 
 [application]
@@ -217,12 +235,12 @@ ui_accept={
 }
 player_left={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 player_right={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 player_up={
@@ -238,7 +256,8 @@ player_down={
 
 [layer_names]
 
-2d_render/layer_2="Jelly"
+2d_render/layer_1="Hook"
+2d_render/layer_2="Big Fishies"
 2d_render/layer_3="Fish"
 
 [physics]

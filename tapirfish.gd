@@ -6,18 +6,17 @@ onready var timer: Timer = get_node("Timer")
 onready var sprite: Sprite = get_node("Sprite")
 
 var agent := GSAIKinematicBody2DAgent.new(self)
-var target := GSAIAgentLocation.new()
 
 var _accel := GSAITargetAcceleration.new()
-#var _velocity := Vector2()
-
-var _arrive := GSAIArrive.new(agent, target)
+onready var _pursue: GSAIPursue = GSAIPursue.new(agent, get_node("/root/Main/Jelly").agent)
 var _blend := GSAIBlend.new(agent)
 
 func _ready():
 	timer.connect("timeout", self, "_on_timer_timeout")
 
-	_blend.add(_arrive, 5)
+	_blend.add(_pursue, 5)
+
+	agent.movement_type = GSAIKinematicBody2DAgent.MovementType.COLLIDE
 
 	agent.linear_speed_max = 500.0
 	agent.linear_acceleration_max = 500.0
@@ -25,13 +24,16 @@ func _ready():
 	agent.angular_speed_max = 100.0
 	agent.angular_acceleration_max = 100.0
 	agent.angular_drag_percentage = 0.3
-	_arrive.deceleration_radius = deg2rad(1.0)
-	_arrive.arrival_tolerance = 1.0
+	#_arrive.deceleration_radius = deg2rad(1.0)
+	#_arrive.arrival_tolerance = 1.0
 
 
 func _physics_process(delta: float) -> void:
 	_blend.calculate_steering(_accel)
 	agent._apply_steering(_accel, delta)
+
+	if agent.collisionObject:
+		print(agent.collisionObject)
 
 	if _accel.linear.x > 0:
 		sprite.flip_h = true
@@ -40,5 +42,5 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_timer_timeout():
-	target.position.x = rand_range(0, x_max)
-	target.position.y = rand_range(0, y_max)
+	var target: GSAISteeringAgent = get_node("/root/Main/Jelly").agent
+	_pursue.target = target

@@ -6,8 +6,7 @@ var acceleration_max := 300
 var angular_speed_max := 5000
 var angular_acceleration_max := 5000
 
-onready var jelly: Node = get_node("/root/Main/Jelly")
-onready var jelly_agent: GSAISteeringAgent = jelly.agent
+
 onready var notifier: VisibilityNotifier2D = get_node("VisibilityNotifier2D") as VisibilityNotifier2D
 
 onready var target := GSAIAgentLocation.new()
@@ -42,7 +41,7 @@ func _ready():
 	look.alignment_tolerance = deg2rad(5)
 	look.deceleration_radius = deg2rad(60)
 
-	var flee := GSAIFlee.new(agent, jelly_agent)
+	#var flee := GSAIFlee.new(agent, jelly_agent)
 
 	if len(all_agents) > 0:
 		all_agents.remove(index)
@@ -55,7 +54,7 @@ func _ready():
 	seek = GSAISeek.new(agent, target)
 
 	blend.add(look, 8)
-	blend.add(flee, 4)
+	#blend.add(flee, 4)
 	blend.add(separation, 1)
 	blend.add(seek, 9)
 

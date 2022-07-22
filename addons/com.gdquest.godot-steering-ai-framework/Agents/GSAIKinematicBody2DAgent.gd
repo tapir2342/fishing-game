@@ -18,6 +18,8 @@ var movement_type: int
 var _last_position: Vector2
 var _body_ref: WeakRef
 
+var collisionObject: KinematicCollision2D
+
 
 func _init(_body: KinematicBody2D, _movement_type: int = MovementType.SLIDE) -> void:
 	if not _body.is_inside_tree():
@@ -69,8 +71,8 @@ func _apply_collide_steering(accel: Vector3, delta: float) -> void:
 	var velocity := GSAIUtils.clampedv3(linear_velocity + accel * delta, linear_speed_max)
 	if apply_linear_drag:
 		velocity = velocity.linear_interpolate(Vector3.ZERO, linear_drag_percentage)
-	# warning-ignore:return_value_discarded
-	_body.move_and_collide(GSAIUtils.to_vector2(velocity) * delta)
+
+	self.collisionObject = _body.move_and_collide(GSAIUtils.to_vector2(velocity) * delta)
 	if calculate_velocities:
 		linear_velocity = velocity
 
