@@ -9,7 +9,7 @@ class_name GSAISpecializedAgent
 # frame. When `false`, the user must keep those values updated.
 var calculate_velocities := true
 
-# If `true`, interpolates the current linear velocity towards 0 by the 
+# If `true`, interpolates the current linear velocity towards 0 by the
 # `linear_drag_percentage` value.
 # Does not apply to `RigidBody` and `RigidBody2D` nodes.
 var apply_linear_drag := true

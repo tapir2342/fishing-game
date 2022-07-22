@@ -1,6 +1,6 @@
 extends Node2D
 
-onready var timer : Timer = get_node("Timer")
+onready var timer: Timer = get_node("Timer")
 
 const Fish = preload("res://fish.tscn")
 
@@ -9,6 +9,7 @@ const SPAWN_MAX := 30
 
 var x_max: int
 var y_max: int
+
 
 func _ready():
 	timer.connect("timeout", self, "_spawn_fishes")
@@ -34,4 +35,4 @@ func _spawn_fishes():
 
 		fish.target.position = Vector3(x_max + 50, rand_range(300, 900), 0)
 		fish.global_position.x = -50
-		fish.global_position.y = rand_range(0, y_max)
+		fish.global_position.y = rand_range(200, y_max)

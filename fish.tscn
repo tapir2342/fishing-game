@@ -11,6 +11,9 @@ height = 33.3335
 position = Vector2( 758, 666 )
 rotation = 1.5708
 scale = Vector2( 0.1, 0.1 )
+z_index = -2
+collision_layer = 4
+collision_mask = 2
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]

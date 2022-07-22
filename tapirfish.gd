@@ -3,6 +3,7 @@ extends KinematicBody2D
 onready var x_max = get_viewport().get_visible_rect().size[0]
 onready var y_max = get_viewport().get_visible_rect().size[1]
 onready var timer: Timer = get_node("Timer")
+onready var sprite: Sprite = get_node("Sprite")
 
 var agent := GSAIKinematicBody2DAgent.new(self)
 var target := GSAIAgentLocation.new()
@@ -11,17 +12,12 @@ var _accel := GSAITargetAcceleration.new()
 #var _velocity := Vector2()
 
 var _arrive := GSAIArrive.new(agent, target)
-var _look := GSAILookWhereYouGo.new(agent)
 var _blend := GSAIBlend.new(agent)
 
 func _ready():
 	timer.connect("timeout", self, "_on_timer_timeout")
 
-	_look.alignment_tolerance = deg2rad(5)
-	_look.deceleration_radius = deg2rad(60)
-
 	_blend.add(_arrive, 5)
-	_blend.add(_look, 10)
 
 	agent.linear_speed_max = 500.0
 	agent.linear_acceleration_max = 500.0
@@ -36,6 +32,11 @@ func _ready():
 func _physics_process(delta: float) -> void:
 	_blend.calculate_steering(_accel)
 	agent._apply_steering(_accel, delta)
+
+	if _accel.linear.x > 0:
+		sprite.flip_h = true
+	else:
+		sprite.flip_h = false
 
 
 func _on_timer_timeout():

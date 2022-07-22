@@ -44,7 +44,8 @@ func _ready():
 
 	var flee := GSAIFlee.new(agent, jelly_agent)
 
-	all_agents.remove(index)
+	if len(all_agents) > 0:
+		all_agents.remove(index)
 	var prox := GSAIRadiusProximity.new(agent, all_agents, 100)
 	# var prox := GSAIProximity.new(agent, larvae)
 	var separation := GSAISeparation.new(agent, prox)
