@@ -17,3 +17,6 @@ func _process(delta) -> void:
 		var squid = collision.collider as Squid
 		if squid:
 			squid.catch()
+			return
+
+		collision.collider.queue_free()
