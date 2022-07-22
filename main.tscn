@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://player2.png" type="Texture" id=1]
 [ext_resource path="res://player.gd" type="Script" id=2]
@@ -21,6 +21,8 @@
 [ext_resource path="res://jelly.gd" type="Script" id=19]
 [ext_resource path="res://bottom.png" type="Texture" id=20]
 [ext_resource path="res://clambubble.png" type="Texture" id=21]
+[ext_resource path="res://guy.png" type="Texture" id=22]
+[ext_resource path="res://clam.png" type="Texture" id=23]
 
 [sub_resource type="CircleShape2D" id=2]
 radius = 63.2456
@@ -303,18 +305,32 @@ wait_time = 4.0
 autostart = true
 
 [node name="Bottom" type="Node2D" parent="."]
+z_index = -10
 
 [node name="Sprite" type="Sprite" parent="Bottom"]
 position = Vector2( -67, 555 )
 scale = Vector2( 0.3, 0.3 )
+z_index = -3
 texture = ExtResource( 20 )
 offset = Vector2( 1616.67, -383.333 )
 
+[node name="Guy" type="Sprite" parent="Bottom"]
+position = Vector2( 201, 448 )
+rotation = 0.326377
+scale = Vector2( 0.4, 0.4 )
+z_index = -2
+texture = ExtResource( 22 )
+
 [node name="Particles2D" type="Particles2D" parent="Bottom"]
-position = Vector2( 218, 459 )
-z_index = -3
+position = Vector2( 202, 476 )
+z_index = -1
 amount = 10
 lifetime = 3.5
 randomness = 0.53
 process_material = SubResource( 15 )
 texture = ExtResource( 21 )
+
+[node name="Clam" type="Sprite" parent="Bottom"]
+position = Vector2( 205, 474 )
+scale = Vector2( 0.282645, 0.282645 )
+texture = ExtResource( 23 )
