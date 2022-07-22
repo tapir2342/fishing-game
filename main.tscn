@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=2]
+[gd_scene load_steps=38 format=2]
 
 [ext_resource path="res://player2.png" type="Texture" id=1]
 [ext_resource path="res://player.gd" type="Script" id=2]
@@ -24,6 +24,8 @@
 [ext_resource path="res://guy.png" type="Texture" id=22]
 [ext_resource path="res://clam.png" type="Texture" id=23]
 [ext_resource path="res://keyboardkey.png" type="Texture" id=24]
+[ext_resource path="res://dreizack.png" type="Texture" id=25]
+[ext_resource path="res://guy_hand.png" type="Texture" id=26]
 
 [sub_resource type="ParticlesMaterial" id=3]
 emission_shape = 2
@@ -339,6 +341,13 @@ position = Vector2( 205, 474 )
 scale = Vector2( 0.282645, 0.282645 )
 texture = ExtResource( 23 )
 
+[node name="Dreizack" type="Sprite" parent="Bottom/Clam"]
+position = Vector2( -555.468, 834.971 )
+rotation = -0.846485
+scale = Vector2( 0.41511, 0.41511 )
+texture = ExtResource( 25 )
+offset = Vector2( 1929.11, -900.25 )
+
 [node name="FishingLine" type="Line2D" parent="."]
 position = Vector2( 3.05176e-05, 1.52588e-05 )
 scale = Vector2( 1, 1 )
@@ -350,3 +359,9 @@ script = ExtResource( 4 )
 [node name="Squid" parent="." instance=ExtResource( 13 )]
 collision_layer = 2
 collision_mask = 3
+
+[node name="GuyHand" type="Sprite" parent="."]
+position = Vector2( 137, 469 )
+rotation = 0.326377
+scale = Vector2( 0.455384, 0.455384 )
+texture = ExtResource( 26 )
