@@ -15,13 +15,7 @@ func _ready():
 
 
 func _physics_process(_delta):
-	if Input.is_action_pressed("player_up"):
-		rest_length -= 1
-		rest_length = clamp(rest_length, 0, 65535)
 
-	if Input.is_action_pressed("player_down"):
-		rest_length += 1
-		rest_length = clamp(rest_length, 0, 65535)
 
 	line.clear_points()
 	line.add_point(actual_node_a.global_position)

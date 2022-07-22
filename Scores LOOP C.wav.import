@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Scores LOOP C.wav-5b872210ce98a39102141512611419fd.sample"
+
+[deps]
+
+source_file="res://Scores LOOP C.wav"
+dest_files=[ "res://.import/Scores LOOP C.wav-5b872210ce98a39102141512611419fd.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Sea Battle LOOP.wav-8cc579bbdb6d12206e47db3210dba4d8.sample"
+
+[deps]
+
+source_file="res://Sea Battle LOOP.wav"
+dest_files=[ "res://.import/Sea Battle LOOP.wav-8cc579bbdb6d12206e47db3210dba4d8.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

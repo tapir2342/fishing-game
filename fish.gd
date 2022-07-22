@@ -1,15 +1,19 @@
 class_name Fish
 extends KinematicBody2D
 
-export var speed_max := 300
-export var acceleration_max := 300
-export var angular_speed_max := 5000
-export var angular_acceleration_max := 5000
+var speed_max := 300
+var acceleration_max := 300
+var angular_speed_max := 5000
+var angular_acceleration_max := 5000
 
 onready var jelly: Node = get_node("/root/Main/Jelly")
 onready var jelly_agent: GSAISteeringAgent = jelly.agent
+onready var notifier: VisibilityNotifier2D = get_node("VisibilityNotifier2D") as VisibilityNotifier2D
+
+onready var target := GSAIAgentLocation.new()
 
 var agent: GSAISteeringAgent
+var seek: GSAISeek
 var blend: GSAIBlend
 
 var velocity := Vector2.ZERO
@@ -17,6 +21,7 @@ var angular_velocity := 0.0
 var linear_drag := 0.1
 var angular_drag := 0.1
 var acceleration := GSAITargetAcceleration.new()
+
 
 var index: int
 
@@ -29,10 +34,8 @@ func _init():
 
 
 func _ready():
-	agent.linear_speed_max = speed_max
-	agent.linear_acceleration_max = acceleration_max
-	agent.angular_speed_max = deg2rad(angular_speed_max)
-	agent.angular_acceleration_max = deg2rad(angular_acceleration_max)
+	notifier.connect("screen_exited", self, "_on_screen_exited")
+
 	#agent.bounding_radius = calculate_radius($CollisionPolygon2D.polygon)
 
 	var look := GSAILookWhereYouGo.new(agent)
@@ -47,9 +50,13 @@ func _ready():
 	var separation := GSAISeparation.new(agent, prox)
 	separation.decay_coefficient = 20000
 
-	blend.add(look, 3)
-	blend.add(flee, 8)
+
+	seek = GSAISeek.new(agent, target)
+
+	blend.add(look, 8)
+	blend.add(flee, 4)
 	blend.add(separation, 1)
+	blend.add(seek, 9)
 
 	_update_agent()
 
@@ -85,4 +92,5 @@ func _update_agent() -> void:
 	agent.angular_velocity = angular_velocity
 
 
-
+func _on_screen_exited() -> void:
+	queue_free()

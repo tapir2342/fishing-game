@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/103605__floating-tree__waves-at-the-dock.mp3-1d321b8e9cc23e9c77d45d69dad8cdfe.mp3str"
+
+[deps]
+
+source_file="res://103605__floating-tree__waves-at-the-dock.mp3"
+dest_files=[ "res://.import/103605__floating-tree__waves-at-the-dock.mp3-1d321b8e9cc23e9c77d45d69dad8cdfe.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
