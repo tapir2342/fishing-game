@@ -21,9 +21,3 @@ func _input(event):
 
 	if event.is_action_released("player_left") or event.is_action_released("player_right"):
 		audio.stop()
-
-	if event.is_action_released("player_left"):
-		_game_state.player_money += 10
-
-	if event.is_action_released("player_right"):
-		_game_state.player_money -= 10

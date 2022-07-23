@@ -1,10 +1,11 @@
+class_name Jelly
 extends KinematicBody2D
 
 onready var x_max = get_viewport().get_visible_rect().size[0]
 onready var y_max = get_viewport().get_visible_rect().size[1]
 onready var timer: Timer = get_node("Timer")
 
-var agent := GSAIKinematicBody2DAgent.new(self)
+var agent := GSAIKinematicBody2DAgent.new(self, GSAIKinematicBody2DAgent.MovementType.COLLIDE)
 var target := GSAIAgentLocation.new()
 
 var _accel := GSAITargetAcceleration.new()

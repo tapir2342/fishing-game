@@ -1,6 +1,6 @@
 extends Control
 
-export var _game_state: Resource
+export var _game_state: Resource = _game_state as GameState
 
 onready var _label_value: Label = get_node("HBoxContainer/Value")
 
