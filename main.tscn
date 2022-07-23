@@ -1,15 +1,15 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://player2.png" type="Texture" id=1]
 [ext_resource path="res://player.gd" type="Script" id=2]
 [ext_resource path="res://rod.png" type="Texture" id=3]
 [ext_resource path="res://fishing_line.gd" type="Script" id=4]
-[ext_resource path="res://hook.png" type="Texture" id=5]
+[ext_resource path="res://hook2.png" type="Texture" id=5]
 [ext_resource path="res://rod.gd" type="Script" id=6]
 [ext_resource path="res://circle.png" type="Texture" id=7]
 [ext_resource path="res://youjelly.png" type="Texture" id=8]
 [ext_resource path="res://swarm.gd" type="Script" id=9]
-[ext_resource path="res://tapirfish.gd" type="Script" id=10]
+[ext_resource path="res://tapirfish.tscn" type="PackedScene" id=10]
 [ext_resource path="res://theme.tres" type="Theme" id=11]
 [ext_resource path="res://sun.gd" type="Script" id=12]
 [ext_resource path="res://squid.tscn" type="PackedScene" id=13]
@@ -17,7 +17,7 @@
 [ext_resource path="res://Scores LOOP C.wav" type="AudioStream" id=15]
 [ext_resource path="res://103605__floating-tree__waves-at-the-dock.mp3" type="AudioStream" id=16]
 [ext_resource path="res://main.gd" type="Script" id=17]
-[ext_resource path="res://tapirfish.png" type="Texture" id=18]
+[ext_resource path="res://default_env.tres" type="Environment" id=18]
 [ext_resource path="res://jelly.gd" type="Script" id=19]
 [ext_resource path="res://bottom.png" type="Texture" id=20]
 [ext_resource path="res://clambubble.png" type="Texture" id=21]
@@ -42,37 +42,19 @@ damping = 49.35
 scale = 0.05
 scale_random = 0.04
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 14.0357
+[sub_resource type="CircleShape2D" id=16]
+radius = 1.0
 
-[sub_resource type="CapsuleShape2D" id=9]
-radius = 56.6667
-height = 86.6666
-
-[sub_resource type="Shader" id=8]
-code = "shader_type canvas_item;
-
-uniform float wave_speed = 3.0; //wave loop speed
-uniform float wave_freq = 10.0; //wave vertical freq
-uniform float wave_width = 1; //wave width
-
-uniform vec4 c;
-
-void fragment() {
-	vec2 scale_UV = SCREEN_UV;
-	vec2 wave_uv_offset;
-	wave_uv_offset.x = cos((TIME*wave_speed)+UV.x+UV.y*wave_freq*2.0)*wave_width*0.01;
-	//COLOR = vec4(wave_uv_offset,0.0,1.0);
-	COLOR = texture(SCREEN_TEXTURE,scale_UV+wave_uv_offset);
-}
-"
-
-[sub_resource type="ShaderMaterial" id=7]
-shader = SubResource( 8 )
-shader_param/wave_speed = 3.0
-shader_param/wave_freq = 10.0
-shader_param/wave_width = 1.0
-shader_param/c = Plane( 1, 0, 0, 1 )
+[sub_resource type="ParticlesMaterial" id=15]
+emission_shape = 1
+emission_sphere_radius = 22.57
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+gravity = Vector3( 0, -40, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+angle = 20.0
+scale = 0.2
 
 [sub_resource type="RectangleShape2D" id=10]
 extents = Vector2( 203.375, 422.75 )
@@ -86,23 +68,16 @@ extents = Vector2( 653, 66.5 )
 [sub_resource type="RectangleShape2D" id=13]
 extents = Vector2( 114.5, 385 )
 
-[sub_resource type="CapsuleShape2D" id=14]
-radius = 17.0
-height = 30.0
-
-[sub_resource type="ParticlesMaterial" id=15]
-emission_shape = 1
-emission_sphere_radius = 22.57
-flag_disable_z = true
-direction = Vector3( 0, 0, 0 )
-gravity = Vector3( 0, -40, 0 )
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-angle = 20.0
-scale = 0.2
+[sub_resource type="CapsuleShape2D" id=9]
+radius = 56.6667
+height = 86.6666
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 17 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 15 )
+volume_db = -24.0
 
 [node name="Player" type="Node2D" parent="."]
 position = Vector2( 255, 157 )
@@ -133,24 +108,192 @@ texture = ExtResource( 7 )
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Player"]
 stream = ExtResource( 16 )
 
+[node name="FishingLine" type="Line2D" parent="."]
+position = Vector2( 3.05176e-05, 1.52588e-05 )
+width = 1.0
+default_color = Color( 0, 0, 0, 1 )
+script = ExtResource( 4 )
+
 [node name="Hook" type="KinematicBody2D" parent="."]
 position = Vector2( 429, 247 )
 collision_mask = 6
 script = ExtResource( 14 )
 
 [node name="Sprite" type="Sprite" parent="Hook"]
-scale = Vector2( 0.2, 0.2 )
+scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 5 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hook"]
-position = Vector2( 1, -6.10352e-05 )
-shape = SubResource( 1 )
+offset = Vector2( -90, 220 )
 
 [node name="Timer" type="Timer" parent="Hook"]
+wait_time = 3.0
+autostart = true
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -6, 13 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -5, 14 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -3, 14 )
+shape = SubResource( 16 )
+
+[node name="Ocean" type="Node2D" parent="."]
+position = Vector2( 0, -3.05176e-05 )
+z_index = -10
+
+[node name="Back" type="CanvasLayer" parent="Ocean"]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="Ocean/Back"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 183.0
+margin_bottom = 1.0
+rect_pivot_offset = Vector2( 123, 193 )
+color = Color( 0.0862745, 0.47451, 0.917647, 1 )
+
+[node name="Front" type="CanvasLayer" parent="Ocean"]
+layer = 10
+
+[node name="ColorRect" type="ColorRect" parent="Ocean/Front"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 204.0
+margin_bottom = 14.0
+rect_pivot_offset = Vector2( 123, 193 )
+color = Color( 0.0862745, 0.47451, 0.917647, 0.447059 )
+
+[node name="Bottom" type="Node2D" parent="Ocean"]
+position = Vector2( 0, 3.05176e-05 )
+z_index = -10
+
+[node name="Sprite" type="Sprite" parent="Ocean/Bottom"]
+position = Vector2( -67, 555 )
+scale = Vector2( 0.3, 0.3 )
+z_index = -3
+texture = ExtResource( 20 )
+offset = Vector2( 1616.67, -383.333 )
+
+[node name="Guy" type="Sprite" parent="Ocean/Bottom"]
+position = Vector2( 201, 448 )
+rotation = 0.326377
+scale = Vector2( 0.4, 0.4 )
+z_index = -2
+texture = ExtResource( 22 )
+
+[node name="Particles2D" type="Particles2D" parent="Ocean/Bottom"]
+position = Vector2( 202, 476 )
+z_index = -1
+amount = 10
+lifetime = 3.5
+randomness = 0.53
+process_material = SubResource( 15 )
+texture = ExtResource( 21 )
+
+[node name="Dreizack" type="Sprite" parent="Ocean/Bottom"]
+position = Vector2( 47.9998, 710 )
+rotation = -0.846485
+scale = Vector2( 0.117329, 0.117329 )
+texture = ExtResource( 25 )
+offset = Vector2( 1929.11, -900.25 )
+
+[node name="GuyHand" type="Sprite" parent="Ocean/Bottom"]
+position = Vector2( 137, 469 )
+rotation = 0.326377
+scale = Vector2( 0.455384, 0.455384 )
+texture = ExtResource( 26 )
+
+[node name="Clam" type="Sprite" parent="Ocean/Bottom"]
+position = Vector2( 205, 474 )
+scale = Vector2( 0.282645, 0.282645 )
+texture = ExtResource( 23 )
+
+[node name="EdgeOfWater" type="StaticBody2D" parent="Ocean"]
+position = Vector2( 0, 3.05176e-05 )
+collision_layer = 256
+collision_mask = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ocean/EdgeOfWater"]
+visible = false
+position = Vector2( -165, 491 )
+shape = SubResource( 10 )
+disabled = true
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Ocean/EdgeOfWater"]
+position = Vector2( 511.5, 189 )
+shape = SubResource( 11 )
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Ocean/EdgeOfWater"]
+visible = false
+position = Vector2( 515, 657 )
+shape = SubResource( 12 )
+disabled = true
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Ocean/EdgeOfWater"]
+visible = false
+position = Vector2( 1126, 424 )
+shape = SubResource( 13 )
+disabled = true
+
+[node name="Sky" type="CanvasLayer" parent="."]
+layer = -20
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Sky"]
+environment = ExtResource( 18 )
+
+[node name="Sun" type="TextureRect" parent="Sky"]
+modulate = Color( 1, 0.964706, 0.847059, 1 )
+margin_right = 110.0
+margin_bottom = 110.0
+texture = ExtResource( 7 )
+script = ExtResource( 12 )
+
+[node name="GameTitle" type="Label" parent="Sky"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -296.0
+margin_top = 28.0
+margin_right = 296.0
+margin_bottom = 222.0
+theme = ExtResource( 11 )
+custom_colors/font_color_shadow = Color( 0.705882, 0.831373, 0.972549, 1 )
+custom_constants/shadow_as_outline = 100
+text = "Pick Up Fishing Lines"
+align = 1
+
+[node name="c" type="Control" parent="Sky"]
+visible = false
+
+[node name="Label" type="Label" parent="Sky/c"]
+margin_left = 47.0
+margin_top = 151.0
+margin_right = 74.0
+margin_bottom = 215.0
+rect_scale = Vector2( 0.3, 0.3 )
+theme = ExtResource( 11 )
+text = "A"
+
+[node name="Keyboardkey" type="Sprite" parent="Sky/c"]
+modulate = Color( 0.882353, 1, 0.847059, 1 )
+position = Vector2( 51, 162 )
+scale = Vector2( 0.0526079, 0.0526079 )
+z_index = -1
+texture = ExtResource( 24 )
+
+[node name="Swarm" type="Node2D" parent="."]
+position = Vector2( -255, -246 )
+script = ExtResource( 9 )
+
+[node name="Timer" type="Timer" parent="Swarm"]
+wait_time = 3.0
 autostart = true
 
 [node name="Jelly" type="KinematicBody2D" parent="."]
 position = Vector2( 868, 299 )
+z_index = 10
 collision_layer = 2
 collision_mask = 3
 script = ExtResource( 19 )
@@ -169,199 +312,9 @@ rotation = 1.5708
 scale = Vector2( 0.2, 0.2 )
 shape = SubResource( 9 )
 
-[node name="Ocean" type="Node2D" parent="."]
-position = Vector2( 0, -3.05176e-05 )
-z_index = -10
+[node name="Tapirfish" parent="." instance=ExtResource( 10 )]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Ocean"]
-layer = -1
-
-[node name="ColorRect2" type="ColorRect" parent="Ocean/CanvasLayer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 183.0
-margin_bottom = 1.0
-rect_pivot_offset = Vector2( 123, 193 )
-color = Color( 0.0862745, 0.47451, 0.917647, 1 )
-
-[node name="Front" type="ColorRect" parent="Ocean/CanvasLayer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 183.0
-margin_bottom = 1.0
-rect_pivot_offset = Vector2( 123, 193 )
-color = Color( 0.0862745, 0.47451, 0.917647, 1 )
-
-[node name="ColorRect" type="ColorRect" parent="Ocean/CanvasLayer"]
-visible = false
-material = SubResource( 7 )
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 173.0
-margin_bottom = 173.0
-
-[node name="Front" type="CanvasLayer" parent="Ocean"]
-layer = 10
-
-[node name="ColorRect" type="ColorRect" parent="Ocean/Front"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 191.0
-margin_bottom = 9.0
-rect_pivot_offset = Vector2( 123, 193 )
-color = Color( 0.0862745, 0.47451, 0.917647, 0.447059 )
-
-[node name="Swarm" type="Node2D" parent="."]
-position = Vector2( -255, -246 )
-script = ExtResource( 9 )
-
-[node name="Timer" type="Timer" parent="Swarm"]
-wait_time = 3.0
-autostart = true
-
-[node name="EdgeOfWater" type="StaticBody2D" parent="."]
-collision_layer = 256
-collision_mask = 6
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EdgeOfWater"]
-visible = false
-position = Vector2( -165, 491 )
-shape = SubResource( 10 )
-disabled = true
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="EdgeOfWater"]
-position = Vector2( 511.5, 189 )
-shape = SubResource( 11 )
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="EdgeOfWater"]
-visible = false
-position = Vector2( 515, 657 )
-shape = SubResource( 12 )
-disabled = true
-
-[node name="CollisionShape2D4" type="CollisionShape2D" parent="EdgeOfWater"]
-visible = false
-position = Vector2( 1126, 424 )
-shape = SubResource( 13 )
-disabled = true
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 15 )
-volume_db = -24.0
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -20
-
-[node name="Sun" type="TextureRect" parent="CanvasLayer"]
-modulate = Color( 1, 0.964706, 0.847059, 1 )
-margin_right = 110.0
-margin_bottom = 110.0
-texture = ExtResource( 7 )
-script = ExtResource( 12 )
-
-[node name="Label" type="Label" parent="CanvasLayer"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -296.0
-margin_top = 28.0
-margin_right = 296.0
-margin_bottom = 222.0
-theme = ExtResource( 11 )
-custom_colors/font_color_shadow = Color( 0.705882, 0.831373, 0.972549, 1 )
-custom_constants/shadow_as_outline = 100
-text = "Pick Up Fishing Lines"
-align = 1
-
-[node name="c" type="Control" parent="CanvasLayer"]
-
-[node name="Label" type="Label" parent="CanvasLayer/c"]
-margin_left = 47.0
-margin_top = 151.0
-margin_right = 74.0
-margin_bottom = 215.0
-rect_scale = Vector2( 0.3, 0.3 )
-theme = ExtResource( 11 )
-text = "A"
-
-[node name="Keyboardkey" type="Sprite" parent="CanvasLayer/c"]
-modulate = Color( 0.882353, 1, 0.847059, 1 )
-position = Vector2( 51, 162 )
-scale = Vector2( 0.0526079, 0.0526079 )
-z_index = -1
-texture = ExtResource( 24 )
-
-[node name="Tapirfish" type="KinematicBody2D" parent="."]
-position = Vector2( 233, 266 )
+[node name="Squid" parent="." instance=ExtResource( 13 )]
 z_index = 10
 collision_layer = 2
 collision_mask = 3
-script = ExtResource( 10 )
-
-[node name="Sprite" type="Sprite" parent="Tapirfish"]
-scale = Vector2( 0.2, 0.2 )
-texture = ExtResource( 18 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Tapirfish"]
-position = Vector2( -3, 1 )
-rotation = 1.5708
-shape = SubResource( 14 )
-
-[node name="Timer" type="Timer" parent="Tapirfish"]
-wait_time = 4.0
-autostart = true
-
-[node name="Bottom" type="Node2D" parent="."]
-z_index = -10
-
-[node name="Sprite" type="Sprite" parent="Bottom"]
-position = Vector2( -67, 555 )
-scale = Vector2( 0.3, 0.3 )
-z_index = -3
-texture = ExtResource( 20 )
-offset = Vector2( 1616.67, -383.333 )
-
-[node name="Guy" type="Sprite" parent="Bottom"]
-position = Vector2( 201, 448 )
-rotation = 0.326377
-scale = Vector2( 0.4, 0.4 )
-z_index = -2
-texture = ExtResource( 22 )
-
-[node name="Particles2D" type="Particles2D" parent="Bottom"]
-position = Vector2( 202, 476 )
-z_index = -1
-amount = 10
-lifetime = 3.5
-randomness = 0.53
-process_material = SubResource( 15 )
-texture = ExtResource( 21 )
-
-[node name="Clam" type="Sprite" parent="Bottom"]
-position = Vector2( 205, 474 )
-scale = Vector2( 0.282645, 0.282645 )
-texture = ExtResource( 23 )
-
-[node name="Dreizack" type="Sprite" parent="Bottom/Clam"]
-position = Vector2( -555.468, 834.971 )
-rotation = -0.846485
-scale = Vector2( 0.41511, 0.41511 )
-texture = ExtResource( 25 )
-offset = Vector2( 1929.11, -900.25 )
-
-[node name="FishingLine" type="Line2D" parent="."]
-position = Vector2( 3.05176e-05, 1.52588e-05 )
-scale = Vector2( 1, 1 )
-z_index = 1
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-script = ExtResource( 4 )
-
-[node name="Squid" parent="." instance=ExtResource( 13 )]
-collision_layer = 2
-collision_mask = 3
-
-[node name="GuyHand" type="Sprite" parent="."]
-position = Vector2( 137, 469 )
-rotation = 0.326377
-scale = Vector2( 0.455384, 0.455384 )
-texture = ExtResource( 26 )

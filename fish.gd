@@ -6,7 +6,6 @@ var acceleration_max := 300
 var angular_speed_max := 5000
 var angular_acceleration_max := 5000
 
-
 onready var notifier: VisibilityNotifier2D = get_node("VisibilityNotifier2D") as VisibilityNotifier2D
 
 onready var target := GSAIAgentLocation.new()
@@ -20,7 +19,6 @@ var angular_velocity := 0.0
 var linear_drag := 0.1
 var angular_drag := 0.1
 var acceleration := GSAITargetAcceleration.new()
-
 
 var index: int
 
@@ -50,12 +48,11 @@ func _ready():
 	var separation := GSAISeparation.new(agent, prox)
 	separation.decay_coefficient = 20000
 
-
 	seek = GSAISeek.new(agent, target)
 
-	blend.add(look, 8)
+	blend.add(look, 7)
 	#blend.add(flee, 4)
-	blend.add(separation, 1)
+	blend.add(separation, 8)
 	blend.add(seek, 9)
 
 	_update_agent()

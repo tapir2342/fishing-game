@@ -2,21 +2,40 @@ extends Node2D
 
 onready var hook: KinematicBody2D = get_node("/root/Main/Hook")
 
+var collision: KinematicCollision2D
+var target: Vector2 = Vector2.ZERO
+var speed := 50
+var t := 0.0
+var up := false
+var down := false
+var new_pos: Vector2
+
 
 func _process(delta) -> void:
-	var dir_hook_to_rod := (self.global_position - hook.global_position).normalized()
-	var collision: KinematicCollision2D
+	up = Input.is_action_pressed("player_up")
+	down = Input.is_action_pressed("player_down")
 
-	if Input.is_action_pressed("player_up"):
-		collision = hook.move_and_collide(dir_hook_to_rod * 10)
+	if up and not down:
+		target = (self.global_position - hook.global_position).normalized() * speed
 
-	if Input.is_action_pressed("player_down"):
-		collision = hook.move_and_collide(Vector2(0, 10))
+	if down and not up:
+		target.y = speed
 
-	if collision:
-		var squid = collision.collider as Squid
-		if squid:
-			squid.catch()
-			return
+	t += delta * 0.5
+	target = Vector2.linear_interpolate(target, t)
 
-		collision.collider.queue_free()
+	if up or down:
+		# Kinematic:
+		collision = hook.move_and_collide(target)
+		# Rigidbody:
+		#hook.apply_central_impulse(target)
+
+		if collision:
+			var squid = collision.collider as Squid
+			if squid:
+				squid.catch()
+				return
+
+			collision.collider.queue_free()
+	else:
+		t = 0.0

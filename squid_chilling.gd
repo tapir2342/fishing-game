@@ -16,14 +16,6 @@ func enter(_msg := {}) -> void:
 	owner.arrive.arrival_tolerance = 1.0
 
 
-func handle_input(_event: InputEvent) -> void:
-	pass
-
-
-func process(_delta: float) -> void:
-	pass
-
-
 func physics_process(delta: float) -> void:
 	owner.blend.calculate_steering(owner.accel)
 	owner.agent._apply_steering(owner.accel, delta)
@@ -37,6 +29,7 @@ func physics_process(delta: float) -> void:
 func _on_timer_timeout():
 	owner.target.position.x = rand_range(0, owner.x_max)
 	owner.target.position.y = rand_range(0, owner.y_max)
+	owner.timer.wait_time = rand_range(0, 5)
 
 
 func exit() -> void:

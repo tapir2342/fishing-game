@@ -1,6 +1,6 @@
 extends State
 
-onready var hook: KinematicBody2D = get_node("/root/Main/Hook")
+onready var hook: Node2D = get_node("/root/Main/Hook")
 onready var cs: CollisionShape2D = owner.get_node("CollisionShape2D")
 
 

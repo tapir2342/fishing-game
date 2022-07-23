@@ -1,12 +1,32 @@
 extends KinematicBody2D
+#extends RigidBody2D
 
-
-onready var rod_tip: Node2D = get_node("/root/Main/Player/Rod/Tip")
 onready var timer: Timer = get_node("Timer")
 
+var cool = 10
 
 
-func _process(_delta) -> void:
-	#self.rotate(rod_tip.global_position.angle_to(self.global_position))
-	#self.rotate(self.global_position.angle_to(rod_tip.global_position))
-	pass
+func _ready() -> void:
+	#self.connect("body_entered", self, "_on_body_entered")
+	timer.connect("timeout", self, "_on_timer_timeout")
+
+
+func _physics_process(delta):
+	self.rotation_degrees += cool * delta
+	self.global_position.y += 10 * delta
+
+
+func _on_timer_timeout() -> void:
+	if cool > 0:
+		cool = -10
+	else:
+		cool = 10
+
+#func _on_body_entered(body: Node):
+#	print("collision")
+#	var squid = body.collider as Squid
+#	if squid:
+#		squid.catch()
+#		return
+#
+#	body.queue_free()
