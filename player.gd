@@ -1,8 +1,10 @@
 extends Node2D
 
+export var _game_state: Resource = _game_state as GameState
 export var speed := 100
 
 onready var audio: AudioStreamPlayer2D = get_node("AudioStreamPlayer2D")
+
 
 func _process(delta):
 	var velocity: float = self.speed * delta
@@ -19,3 +21,9 @@ func _input(event):
 
 	if event.is_action_released("player_left") or event.is_action_released("player_right"):
 		audio.stop()
+
+	if event.is_action_released("player_left"):
+		_game_state.player_money += 10
+
+	if event.is_action_released("player_right"):
+		_game_state.player_money -= 10
