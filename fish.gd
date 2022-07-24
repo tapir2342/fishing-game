@@ -31,8 +31,6 @@ func _init():
 
 
 func _ready():
-	notifier.connect("screen_exited", self, "_on_screen_exited")
-
 	#agent.bounding_radius = calculate_radius($CollisionPolygon2D.polygon)
 
 	var look := GSAILookWhereYouGo.new(agent)
@@ -87,7 +85,3 @@ func _update_agent() -> void:
 	agent.linear_velocity.x = velocity.x
 	agent.linear_velocity.y = velocity.y
 	agent.angular_velocity = angular_velocity
-
-
-func _on_screen_exited() -> void:
-	queue_free()

@@ -5,8 +5,7 @@ onready var cs: CollisionShape2D = owner.get_node("CollisionShape2D")
 
 
 func enter(_msg := {}) -> void:
+	print("Squid caught: %s" % self)
 	owner.get_parent().remove_child(owner)
-	owner.position.x = 0
-	owner.position.y = 0
 	cs.disabled = true
 	hook.add_child(owner)
