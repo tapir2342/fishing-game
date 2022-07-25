@@ -1,5 +1,7 @@
 extends Node2D
 
+export var game_state: Resource = game_state as GameState
+
 onready var hook: KinematicBody2D = get_node("/root/Main/Hook")
 
 var collision: KinematicCollision2D
@@ -25,16 +27,14 @@ func _process(delta) -> void:
 	target = Vector2.linear_interpolate(target, t)
 
 	if up or down:
-		# Kinematic:
 		collision = hook.move_and_collide(target)
-		# Rigidbody:
-		#hook.apply_central_impulse(target)
 
 		if collision:
 			var squid = collision.collider as Squid
 			if squid:
 				squid.catch()
-				return
+
+			game_state.player_score += 1
 
 			collision.collider.queue_free()
 	else:

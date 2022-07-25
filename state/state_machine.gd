@@ -7,8 +7,10 @@ onready var state: Node = get_node(initial_state)
 
 
 func _ready() -> void:
-	print("StateMachine: initial_state: ", state)
 	yield(self.owner, "ready")
+	# The state machine assigns itself to the State objects' state_machine property.
+	for child in get_children():
+		child.state_machine = self
 	self.state.enter()
 
 
@@ -27,7 +29,6 @@ func _physics_process(delta: float) -> void:
 func transition_to(target_state_name: String, msg: Dictionary = {}) -> void:
 	if not self.has_node(target_state_name):
 		var error_msg = "State not found: %s" % target_state_name
-		print(error_msg)
 		push_error(error_msg)
 		return
 

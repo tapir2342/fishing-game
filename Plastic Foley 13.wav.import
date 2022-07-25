@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Plastic Foley 13.wav-334562237ef285ac80790158f1fce71a.sample"
+
+[deps]
+
+source_file="res://Plastic Foley 13.wav"
+dest_files=[ "res://.import/Plastic Foley 13.wav-334562237ef285ac80790158f1fce71a.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource( 1 )
-player_money = 15
+player_score = 0
+tapir_score = 0

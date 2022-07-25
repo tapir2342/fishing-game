@@ -2,4 +2,10 @@
 
 extends Node
 
-signal player_money_changed(old, new)
+signal player_score_changed(old, new)
+signal tapir_score_changed(old, new)
+signal countdown_changed(old, new)
+signal countdown_done
+
+signal prey_spawned
+signal tutorial_confirmed

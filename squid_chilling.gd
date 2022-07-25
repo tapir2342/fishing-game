@@ -2,6 +2,8 @@ extends State
 
 
 func enter(_msg := {}) -> void:
+	randomize()
+
 	owner.timer.connect("timeout", self, "_on_timer_timeout")
 
 	owner.blend.add(owner.arrive, 5)

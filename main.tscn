@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=62 format=2]
 
 [ext_resource path="res://player2.png" type="Texture" id=1]
 [ext_resource path="res://player.gd" type="Script" id=2]
@@ -7,15 +7,18 @@
 [ext_resource path="res://hook2.png" type="Texture" id=5]
 [ext_resource path="res://rod.gd" type="Script" id=6]
 [ext_resource path="res://circle.png" type="Texture" id=7]
-[ext_resource path="res://ui_player_money.gd" type="Script" id=9]
+[ext_resource path="res://jelly.tscn" type="PackedScene" id=8]
+[ext_resource path="res://waves.png" type="Texture" id=9]
 [ext_resource path="res://tapirfish.tscn" type="PackedScene" id=10]
 [ext_resource path="res://theme.tres" type="Theme" id=11]
 [ext_resource path="res://sun.gd" type="Script" id=12]
+[ext_resource path="res://squid.tscn" type="PackedScene" id=13]
 [ext_resource path="res://hook.gd" type="Script" id=14]
-[ext_resource path="res://Scores LOOP C.wav" type="AudioStream" id=15]
+[ext_resource path="res://Sea Battle LOOP.wav" type="AudioStream" id=15]
 [ext_resource path="res://103605__floating-tree__waves-at-the-dock.mp3" type="AudioStream" id=16]
 [ext_resource path="res://main.gd" type="Script" id=17]
 [ext_resource path="res://default_env.tres" type="Environment" id=18]
+[ext_resource path="res://state/state_machine.gd" type="Script" id=19]
 [ext_resource path="res://bottom.png" type="Texture" id=20]
 [ext_resource path="res://clambubble.png" type="Texture" id=21]
 [ext_resource path="res://guy.png" type="Texture" id=22]
@@ -23,10 +26,32 @@
 [ext_resource path="res://keyboardkey.png" type="Texture" id=24]
 [ext_resource path="res://dreizack.png" type="Texture" id=25]
 [ext_resource path="res://guy_hand.png" type="Texture" id=26]
-[ext_resource path="res://new_resource.tres" type="Resource" id=27]
-[ext_resource path="res://573362__doudar41__coins12.wav" type="AudioStream" id=28]
-[ext_resource path="res://play_sound_on_player_money.gd" type="Script" id=29]
+[ext_resource path="res://game_state.gd" type="Script" id=27]
+[ext_resource path="res://sound_on_even_player.tscn" type="PackedScene" id=28]
+[ext_resource path="res://Level Up ORCHESTRA.wav" type="AudioStream" id=29]
 [ext_resource path="res://level.gd" type="Script" id=30]
+[ext_resource path="res://game_tutorial.gd" type="Script" id=31]
+[ext_resource path="res://game_loop.gd" type="Script" id=32]
+[ext_resource path="res://tutorial.gd" type="Script" id=33]
+[ext_resource path="res://TextBig.tres" type="DynamicFont" id=34]
+[ext_resource path="res://score_player.png" type="Texture" id=35]
+[ext_resource path="res://score_tapir.png" type="Texture" id=36]
+[ext_resource path="res://score_player_progress.png" type="Texture" id=37]
+[ext_resource path="res://score_tapir_progress.png" type="Texture" id=38]
+[ext_resource path="res://sky.png" type="Texture" id=39]
+[ext_resource path="res://tapir_score.gd" type="Script" id=40]
+[ext_resource path="res://game_win_or_lose.gd" type="Script" id=41]
+[ext_resource path="res://player_score.gd" type="Script" id=42]
+[ext_resource path="res://game_state.tres" type="Resource" id=43]
+[ext_resource path="res://EduVICWANTBeginner-VariableFont_wght.ttf" type="DynamicFontData" id=44]
+[ext_resource path="res://countdown.gd" type="Script" id=45]
+[ext_resource path="res://win_or_lose.gd" type="Script" id=46]
+[ext_resource path="res://Death STRINGS.wav" type="AudioStream" id=47]
+
+[sub_resource type="Resource" id=25]
+script = ExtResource( 27 )
+player_score = 0
+tapir_score = 0
 
 [sub_resource type="Curve" id=18]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.0354838 ), 0.0, 0.0, 0, 0 ]
@@ -54,6 +79,29 @@ color = Color( 1, 1, 1, 0.466667 )
 [sub_resource type="CircleShape2D" id=16]
 radius = 1.0
 
+[sub_resource type="Shader" id=20]
+code = "shader_type canvas_item;
+
+uniform float wave_speed = 3.0; //wave loop speed
+uniform float wave_freq = 10.0; //wave vertical freq
+uniform float wave_width = 1; //wave width 
+
+void fragment() {
+	vec2 scale_UV = SCREEN_UV;
+	vec2 wave_uv_offset;
+	wave_uv_offset.x = cos((TIME*wave_speed)+UV.x+UV.y*wave_freq*2.0)*wave_width*0.01;
+	//COLOR = vec4(wave_uv_offset,0.0,1.0);
+	COLOR = texture(SCREEN_TEXTURE,scale_UV+wave_uv_offset);
+	COLOR = texture(SCREEN_TEXTURE,scale_UV+wave_uv_offset);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = SubResource( 20 )
+shader_param/wave_speed = 2.0
+shader_param/wave_freq = 10.0
+shader_param/wave_width = 0.05
+
 [sub_resource type="ParticlesMaterial" id=15]
 emission_shape = 1
 emission_sphere_radius = 22.57
@@ -71,22 +119,65 @@ extents = Vector2( 526, 6.5 )
 [sub_resource type="RectangleShape2D" id=17]
 extents = Vector2( 7, 208 )
 
+[sub_resource type="RectangleShape2D" id=22]
+extents = Vector2( 526, 13.5 )
+
+[sub_resource type="Shader" id=23]
+code = "shader_type canvas_item;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void vertex() {
+	VERTEX += vec2(cos(TIME)*10.0, sin(TIME)*10.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=24]
+shader = SubResource( 23 )
+
+[sub_resource type="DynamicFont" id=26]
+size = 80
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 44 )
+
 [node name="Main" type="Node2D"]
 script = ExtResource( 17 )
 
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 19 )
+initial_state = NodePath("Tutorial")
+
+[node name="Tutorial" type="Node" parent="StateMachine"]
+script = ExtResource( 31 )
+tutorial_path = NodePath("../../Tutorial")
+
+[node name="Loop" type="Node" parent="StateMachine"]
+script = ExtResource( 32 )
+countdown_path = NodePath("../../Countdown")
+
+[node name="WinOrLose" type="Node" parent="StateMachine"]
+script = ExtResource( 41 )
+game_state = ExtResource( 43 )
+win_or_lose_path = NodePath("../../WinOrLose")
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 15 )
-volume_db = -24.0
+volume_db = -12.0
+autoplay = true
 
 [node name="Player" type="Node2D" parent="."]
 position = Vector2( 255, 157 )
 scale = Vector2( 0.1, 0.1 )
 script = ExtResource( 2 )
-_game_state = ExtResource( 27 )
+_game_state = SubResource( 25 )
 
 [node name="Rod" type="Node2D" parent="Player"]
 position = Vector2( 1110, -200 )
 script = ExtResource( 6 )
+game_state = ExtResource( 43 )
 
 [node name="Sprite2" type="Sprite" parent="Player/Rod"]
 texture = ExtResource( 3 )
@@ -129,6 +220,22 @@ wait_time = 3.0
 autostart = true
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -7, 11 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -7, 9 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="Hook"]
+position = Vector2( -1, 13 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D9" type="CollisionShape2D" parent="Hook"]
+position = Vector2( 0, 11 )
+shape = SubResource( 16 )
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Hook"]
 position = Vector2( -6, 13 )
 shape = SubResource( 16 )
 
@@ -161,6 +268,17 @@ layer = 10
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 188.0
+rect_pivot_offset = Vector2( 123, 193 )
+color = Color( 0.0862745, 0.47451, 0.917647, 0.447059 )
+
+[node name="ColorRect2" type="ColorRect" parent="Ocean/Front"]
+material = SubResource( 21 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -1.0
+margin_top = 182.0
+margin_right = -1.0
+margin_bottom = -2.0
 rect_pivot_offset = Vector2( 123, 193 )
 color = Color( 0.0862745, 0.47451, 0.917647, 0.447059 )
 
@@ -236,8 +354,8 @@ collision_layer = 128
 collision_mask = 8
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Ocean/EdgeOfWater2"]
-position = Vector2( 512, 177.5 )
-shape = SubResource( 11 )
+position = Vector2( 512, 184.5 )
+shape = SubResource( 22 )
 
 [node name="Sky" type="CanvasLayer" parent="."]
 layer = -20
@@ -246,24 +364,12 @@ layer = -20
 environment = ExtResource( 18 )
 
 [node name="Sun" type="TextureRect" parent="Sky"]
+visible = false
 modulate = Color( 1, 0.964706, 0.847059, 1 )
 margin_right = 110.0
 margin_bottom = 110.0
 texture = ExtResource( 7 )
 script = ExtResource( 12 )
-
-[node name="GameTitle" type="Label" parent="Sky"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -296.0
-margin_top = 28.0
-margin_right = 296.0
-margin_bottom = 222.0
-theme = ExtResource( 11 )
-custom_colors/font_color_shadow = Color( 0.705882, 0.831373, 0.972549, 1 )
-custom_constants/shadow_as_outline = 100
-text = "Pick Up Fishing Lines"
-align = 1
 
 [node name="c" type="Control" parent="Sky"]
 visible = false
@@ -285,37 +391,11 @@ z_index = -1
 texture = ExtResource( 24 )
 
 [node name="Tapirfish" parent="." groups=["Predator"] instance=ExtResource( 10 )]
+position = Vector2( 529, 319 )
 collision_mask = 384
+game_state = ExtResource( 43 )
 
-[node name="PlayerMoney" type="Control" parent="."]
-margin_left = 10.0
-margin_top = 4.0
-margin_right = 50.0
-margin_bottom = 44.0
-theme = ExtResource( 11 )
-script = ExtResource( 9 )
-_game_state = ExtResource( 27 )
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PlayerMoney"]
-margin_right = 40.0
-margin_bottom = 40.0
-
-[node name="Value" type="Label" parent="PlayerMoney/HBoxContainer"]
-margin_right = 29.0
-margin_bottom = 64.0
-text = "0"
-
-[node name="Label" type="Label" parent="PlayerMoney/HBoxContainer"]
-margin_left = 33.0
-margin_right = 62.0
-margin_bottom = 64.0
-text = "$"
-
-[node name="PlaySoundOnPlayerMoney" type="Node2D" parent="."]
-script = ExtResource( 29 )
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="PlaySoundOnPlayerMoney"]
-stream = ExtResource( 28 )
+[node name="PlaySoundOnPlayerScore" parent="." instance=ExtResource( 28 )]
 
 [node name="Level1" type="Node2D" parent="."]
 script = ExtResource( 30 )
@@ -327,3 +407,334 @@ autostart = true
 [node name="TimerSquid" type="Timer" parent="Level1"]
 wait_time = 4.0
 autostart = true
+
+[node name="Squid" parent="." instance=ExtResource( 13 )]
+position = Vector2( 783, 288 )
+
+[node name="Jelly" parent="." instance=ExtResource( 8 )]
+position = Vector2( 194, 390 )
+
+[node name="Tutorial" type="CanvasLayer" parent="."]
+layer = 100
+script = ExtResource( 33 )
+confirmation_button_path = NodePath("Control/Panel/Button")
+
+[node name="Control" type="Control" parent="Tutorial"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 11 )
+
+[node name="ColorRect" type="ColorRect" parent="Tutorial/Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.635294 )
+
+[node name="Panel" type="Panel" parent="Tutorial/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -191.0
+margin_top = -182.0
+margin_right = 191.0
+margin_bottom = 182.0
+
+[node name="Title" type="Label" parent="Tutorial/Control/Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -293.0
+margin_top = 23.0
+margin_right = 299.0
+margin_bottom = 217.0
+theme = ExtResource( 11 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 34 )
+text = "Pick Up Fishing Lines"
+align = 1
+
+[node name="Controls" type="VBoxContainer" parent="Tutorial/Control/Panel"]
+margin_left = -5.5
+margin_top = 114.0
+margin_right = 376.5
+margin_bottom = 240.0
+
+[node name="Welcome" type="Label" parent="Tutorial/Control/Panel/Controls"]
+margin_right = 382.0
+margin_bottom = 87.0
+text = "Hello, thanks for playing my game!
+The objective is too catch more fish than Tapirfish can;
+within a  minute!
+
+Controls:"
+align = 1
+
+[node name="Welcome2" type="Label" parent="Tutorial/Control/Panel/Controls"]
+margin_top = 91.0
+margin_right = 382.0
+margin_bottom = 106.0
+align = 1
+
+[node name="MoveBoat" type="HBoxContainer" parent="Tutorial/Control/Panel/Controls"]
+margin_top = 110.0
+margin_right = 382.0
+margin_bottom = 125.0
+alignment = 1
+
+[node name="Label" type="Label" parent="Tutorial/Control/Panel/Controls/MoveBoat"]
+margin_left = 104.0
+margin_right = 166.0
+margin_bottom = 15.0
+text = "Move Boat:"
+
+[node name="Label2" type="Label" parent="Tutorial/Control/Panel/Controls/MoveBoat"]
+margin_left = 170.0
+margin_right = 278.0
+margin_bottom = 15.0
+text = "A + D / Left + Right"
+align = 2
+
+[node name="MoveHook" type="HBoxContainer" parent="Tutorial/Control/Panel/Controls"]
+margin_top = 129.0
+margin_right = 382.0
+margin_bottom = 144.0
+alignment = 1
+
+[node name="Label" type="Label" parent="Tutorial/Control/Panel/Controls/MoveHook"]
+margin_left = 103.0
+margin_right = 169.0
+margin_bottom = 15.0
+text = "Move Hook:"
+
+[node name="Label2" type="Label" parent="Tutorial/Control/Panel/Controls/MoveHook"]
+margin_left = 173.0
+margin_right = 278.0
+margin_bottom = 15.0
+text = "W + S / Up + Down"
+align = 2
+
+[node name="Button" type="Button" parent="Tutorial/Control/Panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -100.0
+margin_top = 87.0
+margin_right = 97.0
+margin_bottom = 155.0
+
+[node name="Label" type="Label" parent="Tutorial/Control/Panel/Button"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -63.0
+margin_top = -24.0
+margin_right = 70.0
+margin_bottom = 22.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 34 )
+text = "Ok, start!"
+
+[node name="Score" type="CanvasLayer" parent="."]
+
+[node name="Player" type="Control" parent="Score"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 42 )
+
+[node name="TextureProgress" type="TextureProgress" parent="Score/Player"]
+margin_right = 512.0
+margin_bottom = 74.0
+texture_progress = ExtResource( 37 )
+
+[node name="Avatar" type="TextureRect" parent="Score/Player"]
+margin_right = 129.0
+margin_bottom = 74.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 35 )
+stretch_mode = 3
+
+[node name="TextureRect" type="TextureRect" parent="Score/Player"]
+margin_top = 74.0
+margin_right = 512.0
+margin_bottom = 148.0
+rect_scale = Vector2( 1, 0.1 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 37 )
+
+[node name="Label" type="Label" parent="Score/Player"]
+margin_left = 143.0
+margin_top = 17.0
+margin_right = 164.0
+margin_bottom = 63.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 34 )
+text = "0"
+
+[node name="Tapir" type="Control" parent="Score"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 40 )
+
+[node name="TextureProgress" type="TextureProgress" parent="Score/Tapir"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 472.0
+margin_right = 984.0
+margin_bottom = 74.0
+allow_greater = true
+allow_lesser = true
+texture_progress = ExtResource( 38 )
+fill_mode = 1
+
+[node name="Avatar" type="TextureRect" parent="Score/Tapir"]
+margin_left = 959.0
+margin_right = 1024.0
+margin_bottom = 74.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 36 )
+stretch_mode = 3
+
+[node name="TextureRect" type="TextureRect" parent="Score/Tapir"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 472.0
+margin_top = 74.0
+margin_right = 984.0
+margin_bottom = 148.0
+rect_scale = Vector2( 1, 0.1 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 38 )
+
+[node name="Label" type="Label" parent="Score/Tapir"]
+margin_left = 908.0
+margin_top = 14.0
+margin_right = 929.0
+margin_bottom = 60.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 34 )
+text = "0"
+align = 2
+
+[node name="Sky2" type="Sprite" parent="."]
+position = Vector2( 512, 93.75 )
+scale = Vector2( 1, 1.15644 )
+texture = ExtResource( 39 )
+flip_v = true
+
+[node name="Waves" type="Sprite" parent="."]
+material = SubResource( 24 )
+position = Vector2( 516.5, 182 )
+scale = Vector2( 1.12793, 0.32 )
+z_index = -1
+texture = ExtResource( 9 )
+
+[node name="Countdown" type="CanvasLayer" parent="."]
+script = ExtResource( 45 )
+
+[node name="Label" type="Label" parent="Countdown"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -40.0
+margin_top = 18.0
+margin_right = 45.0
+margin_bottom = 120.0
+theme = ExtResource( 11 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 26 )
+align = 1
+
+[node name="Timer" type="Timer" parent="Countdown"]
+
+[node name="WinOrLose" type="CanvasLayer" parent="."]
+layer = 100
+script = ExtResource( 46 )
+
+[node name="Panel" type="Panel" parent="WinOrLose"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -231.5
+margin_top = -187.5
+margin_right = 231.5
+margin_bottom = 187.5
+theme = ExtResource( 11 )
+
+[node name="Victory" type="Control" parent="WinOrLose/Panel"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+
+[node name="Label" type="Label" parent="WinOrLose/Panel/Victory"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -52.5
+margin_top = -140.0
+margin_right = 52.5
+margin_bottom = -94.0
+custom_fonts/font = ExtResource( 34 )
+text = "Victory!"
+
+[node name="Label2" type="Label" parent="WinOrLose/Panel/Victory"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -210.0
+margin_top = -72.0
+margin_right = 1008.0
+margin_bottom = 72.0
+text = "You made it! You caught more than Tapirfish,  Slayer of the Seven Seas!
+Congratulations!
+
+(Thanks for playing!)"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="WinOrLose/Panel/Victory"]
+stream = ExtResource( 29 )
+
+[node name="Defeat" type="Control" parent="WinOrLose/Panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+
+[node name="Label" type="Label" parent="WinOrLose/Panel/Defeat"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -52.5
+margin_top = -140.0
+margin_right = 52.5
+margin_bottom = -94.0
+custom_fonts/font = ExtResource( 34 )
+text = "Defeat!"
+
+[node name="Label2" type="Label" parent="WinOrLose/Panel/Defeat"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -210.0
+margin_top = -72.0
+margin_right = 1008.0
+margin_bottom = 72.0
+text = "You were too slow! This round goes to Tapirfish,  Slayer of the Seven Seas!
+Maybe next time!
+
+(Thanks for playing!)"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="WinOrLose/Panel/Defeat"]
+stream = ExtResource( 47 )

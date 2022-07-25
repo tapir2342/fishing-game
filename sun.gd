@@ -1,6 +1,5 @@
 extends TextureRect
 
-
 var x_max: int
 
 
@@ -9,6 +8,9 @@ func _ready():
 
 
 func _process(delta):
+	if Engine.time_scale == 0:
+		return
+
 	self.rect_position.x += cos(delta)
 	self.rect_position.y += sin(delta)
 

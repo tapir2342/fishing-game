@@ -18,6 +18,8 @@ var _flee: GSAIFlee
 
 
 func _ready():
+	randomize()
+
 	timer.connect("timeout", self, "_on_timer_timeout")
 
 	_look.alignment_tolerance = deg2rad(5)

@@ -8,7 +8,7 @@
 radius = 56.6667
 height = 86.6666
 
-[node name="Jelly" type="KinematicBody2D" groups=["Jellies"]]
+[node name="Jelly" type="KinematicBody2D" groups=["Jellies", "Prey"]]
 position = Vector2( 0, 2 )
 z_index = 10
 collision_layer = 2
