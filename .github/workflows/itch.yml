@@ -5,7 +5,6 @@ on:
       - main
 env:
   GODOT_VERSION: 3.4.4
-  EXPORT_NAME: fishing-game
 
 jobs:
   export-web:
